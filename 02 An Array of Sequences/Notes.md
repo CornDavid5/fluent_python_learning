@@ -18,7 +18,7 @@
 ## List Comprehension and Generator Expression
 - listcomps vs genexps
     - listcomps use to create list, while genexps use to create sequence
-    - genexp saves memory because it yields items one by one using the iterator protocol instead of building a whole list just to feed another constructor.
+    - genexp saves memory because it `yield`s items one by one using the iterator protocol instead of building a whole list just to feed another constructor.
 - Local Scope and Walrus operator `:=`
     ``` python
     >>> x = 'ABC'
@@ -37,7 +37,9 @@
     ```
 
 - [expression for item in iterable if condition == True]
+    - A list comprehension returns an iterable.
 - (expression for item in iterable if condition == True)
+    - A generator expression is an expression that returns a generator object. Because a generator object is a lazy iterator, you can use a for loop to iterate over its elements.
 
 ## Tuple
 - Tuple as records
