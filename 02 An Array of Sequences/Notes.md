@@ -60,7 +60,9 @@
     >>> b
     (10, 'alpha', [1, 2, 99])
     ```
+    - immutability only applies to the reference contained in it
     - a tuple with mutable element is not hashable
+- Given tupe `t`, tuple(t) returns a reference to the same `t`. Be careful, any modification will reflect on both variables.
 - single-item tuples must be written with trailing comma. (record,)
 
 ## Unpacking Sequences and Iterables
@@ -76,9 +78,10 @@ a, b, *rest = range(5) # (0, 1, [2, 3, 4])
 a, b, *rest = range(3) # (0, 1, [2])
 a, b, *rest = range(2) # (0, 1, [])
 
-# unpack with * in function call and sequence literal
+# *rest in here means variable-length parameters
 def fun(a, b, c, d, *rest):
     return a, b, c, d, rest
+# unpack with * in function call and sequence literal
 fun(*[1, 2], 3, *range(4, 7)) # (1, 2, 3, 4, (5, 6))
 
 {*range(4), 4, *(5, 6, 7)} # {0, 1, 2, 3, 4, 5, 6, 7}
@@ -86,19 +89,6 @@ fun(*[1, 2], 3, *range(4, 7)) # (1, 2, 3, 4, (5, 6))
 
 ## Pattern Matching with Sequences
 ``` python
-def handle_command(self, message):
-    match message: 
-        case ['BEEPER', frequency, times]: 
-            self.beep(times, frequency)
-        case ['NECK', angle]: 
-            self.rotate_neck(angle)
-        case ['LED', ident, intensity]: 
-            self.leds[ident].set_brightness(ident, intensity)
-        case ['LED', ident, red, green, blue]: 
-            self.leds[ident].set_color(ident, red, green, blue)
-        case _: 
-            raise InvalidCommand(message)
-
 # deconstructuring
 metro_areas = [
     ('Tokyo', 'JP', 36.933, (35.689722, 139.691667)),
@@ -110,7 +100,9 @@ metro_areas = [
 
 for record in metro_areas:
     match record:
-        case [name, _, _, (float(lat), float(lon)) as coord] if lon <= 0:
+        # Could also add type information: case [str(name), _, _, (float(lat), float(lon))]
+        # in will forms a runtime type check
+        case [name, _, _, (lat, lon)] if lon <= 0:
             print(f'{name:15} | {lat:9.4f} | {lon:9.4f}')
 
 # you can also match a instance of a class. Alternative way is using if block with isinstance function
@@ -130,7 +122,7 @@ def evaluate(exp: Expression, env: Environment) -> Any:
         # (lambda (parms…) body1 body2…)
         case ['lambda', [*parms], *body] if body:  
             return Procedure(parms, body, env)
-        # (define name exp)
+        # (define name exp), Symbol() here means match an instance of Symbol
         case ['define', Symbol() as name, value_exp]: 
             env[name] = evaluate(value_exp, env)
         # (define (name parm…) body1 body2…)
@@ -144,7 +136,7 @@ def evaluate(exp: Expression, env: Environment) -> Any:
 
 ## Slicing
 - To evaluate the expression `seq[start:stop:step]`, Python calls `seq.__getitem__(slice(start, stop, step))`
-- Name a slice
+- Name a slice, slice object
 ``` python
 >>> invoice = """
 ... 0.....6.................................40........52...55........
@@ -161,10 +153,11 @@ def evaluate(exp: Expression, env: Environment) -> Any:
 >>> line_items = invoice.split('\n')[2:]
 >>> for item in line_items:
 ...     print(item[UNIT_PRICE], item[DESCRIPTION])
-$17.50   Pimoroni PiBrella
-$4.95   6mm Tactile Switch x20
-$28.00   Panavise Jr. - PV-201
-$34.95   PiTFT Mini Kit 320x240
+...
+    $17.50   Pimoroni PiBrella
+    $4.95   6mm Tactile Switch x20
+    $28.00   Panavise Jr. - PV-201
+    $34.95   PiTFT Mini Kit 320x240
 ```
 - Assign to slice
 ``` python
